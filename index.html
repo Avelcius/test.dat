@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Recovery</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', monospace;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: linear-gradient(
+                45deg, 
+                #000000, 
+                #001100, 
+                #002200, 
+                #003300,
+                #002200,
+                #001100,
+                #000000
+            );
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .glitch-text {
+            font-size: 2.5em;
+            position: relative;
+            animation: glitch 1s infinite;
+            text-shadow: 2px 2px 10px rgba(0, 255, 0, 0.5);
+            color: #0f0;
+        }
+
+        .datetime {
+            color: #0f0;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #0f0;
+        }
+
+        .dots {
+            font-size: 2em;
+            margin-top: 20px;
+            letter-spacing: 5px;
+            color: #0f0;
+        }
+
+        .dot {
+            opacity: 0;
+            animation: dotAnimation 2s infinite;
+        }
+
+        .dot:nth-child(2) { animation-delay: 0.4s; }
+        .dot:nth-child(3) { animation-delay: 0.8s; }
+        .dot:nth-child(4) { animation-delay: 1.2s; }
+        .dot:nth-child(5) { animation-delay: 1.6s; }
+
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+            }
+            20% {
+                transform: translate(-2px, 2px);
+                color: #0f0;
+            }
+            40% {
+                transform: translate(-2px, -2px);
+                color: #00ff00;
+            }
+            60% {
+                transform: translate(2px, 2px);
+                color: #0f0;
+            }
+            80% {
+                transform: translate(2px, -2px);
+                color: #00ff00;
+            }
+            81% {
+                opacity: 0.8;
+            }
+            82% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        @keyframes dotAnimation {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 255, 0, 0.1) 50%
+            );
+            background-size: 100% 4px;
+            animation: scanline 10s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-radial-gradient(
+                circle at 50% 50%,
+                rgba(0, 255, 0, 0.05),
+                rgba(0, 255, 0, 0.05) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            opacity: 0.3;
+            animation: noise 0.5s infinite;
+            z-index: 1;
+        }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.1;
+        }
+
+        .matrix-line {
+            position: absolute;
+            width: 2px;
+            background: #0f0;
+            animation: matrixFall linear infinite;
+        }
+
+        @keyframes matrixFall {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+
+        @keyframes noise {
+            0% { transform: translate(0, 0); }
+            10% { transform: translate(-1%, -1%); }
+            20% { transform: translate(1%, 1%); }
+            30% { transform: translate(-2%, -2%); }
+            40% { transform: translate(2%, 2%); }
+            50% { transform: translate(-1%, -1%); }
+            60% { transform: translate(1%, 1%); }
+            70% { transform: translate(-2%, -2%); }
+            80% { transform: translate(2%, 2%); }
+            90% { transform: translate(-1%, -1%); }
+            100% { transform: translate(0, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg" id="matrixBg"></div>
+    <div class="noise"></div>
+    <div class="scanline"></div>
+    <div class="container">
+        <div class="datetime">2025-03-08 18:03:40 UTC</div>
+        <div class="glitch-text">DATA RECOVERY IN PROCESS</div>
+        <div class="dots">
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+        </div>
+    </div>
+
+    <script>
+        // Create Matrix rain effect
+        function createMatrixBg() {
+            const matrixBg = document.getElementById('matrixBg');
+            const width = window.innerWidth;
+            const numberOfLines = Math.floor(width / 20); // One line every 20px
+
+            for (let i = 0; i < numberOfLines; i++) {
+                const line = document.createElement('div');
+                line.className = 'matrix-line';
+                line.style.left = `${i * 20}px`;
+                line.style.height = `${Math.random() * 50 + 20}px`;
+                line.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                line.style.animationDelay = `${Math.random() * 2}s`;
+                matrixBg.appendChild(line);
+            }
+        }
+
+        // Initialize matrix background
+        createMatrixBg();
+
+        // Recreate matrix background on window resize
+        window.addEventListener('resize', () => {
+            const matrixBg = document.getElementById('matrixBg');
+            matrixBg.innerHTML = '';
+            createMatrixBg();
+        });
+    </script>
+</body>
+</html>
